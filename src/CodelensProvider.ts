@@ -43,6 +43,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                 let codeLines = content.split("\n");
                 codeLines.splice(0, 1);
                 let code = codeLines.join("\n").replace(/`/g, "");
+                code = code.slice(0, -1); // remove last \n
                 
                 // Copy
                 const line = document.lineAt(document.positionAt(matches.index).line);
@@ -58,47 +59,57 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                 };
                 
                 let startLine = line.lineNumber + 1 // starting line (0 indexed) from ```, so need add +1
-                let endLine = startLine + codeLines.length - 1// include last ```, so need -1
+                let endLine = startLine + codeLines.length - 2
+                let endCol = 0;
+                if(codeLines.length - 2 > 0){ // case null
+                    endCol = codeLines[codeLines.length - 2].length; + 1
+                }
                 
                 // Select
                 const selectCommand: vscode.Command = {
                     title: "🔦",
                     command: "markdown-copy-code.selectcode",
-                    arguments: [startLine, endLine, false]
+                    arguments: [startLine, endLine, endCol, false]
                 };
                 
+                // Cut
                 const cutCommand: vscode.Command = {
                     title: "✂️",
                     command: "markdown-copy-code.cutcode",
-                    arguments: [startLine, endLine, false]
+                    arguments: [startLine, endLine, endCol, false]
                 };
                 
+                // Delete
                 const deleteCommand: vscode.Command = {
                     title: "🗑️",
                     command: "markdown-copy-code.deletecode",
-                    arguments: [startLine, endLine, false]
+                    arguments: [startLine, endLine, endCol, false]
                 };
                 
+                
+                // Indent
                 const indentCommand: vscode.Command = {
                     title: "🔜",
                     command: "markdown-copy-code.indentcode",
-                    arguments: [startLine, endLine, false]
+                    arguments: [startLine, endLine + 1, false]
                 };
                 
+                // Outdent
                 const outdentCommand: vscode.Command = {
                     title: "🔙",
                     command: "markdown-copy-code.outdentcode",
-                arguments: [startLine, endLine, false]
+                arguments: [startLine, endLine + 1, false]
                 };
                 
                 // Add Above Commands
-                if (copyRange) {
+                if (copyRange) { // put some label after ``` to alwyas trigger
                     this.codeLenses.push(new vscode.CodeLens(copyRange, copyCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, deleteCommand));
+                    // this.codeLenses.push(new vscode.CodeLens(copyRange, pasteCommand)); // ⠐TODO⠂ paste append / paste overwrite / cursor pos
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, cutCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, outdentCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, cutCommand));
                 }
                 
                 
