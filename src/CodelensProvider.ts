@@ -57,9 +57,8 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     arguments: [code, false]
                 };
                 
-                
                 let startLine = line.lineNumber + 1 // starting line (0 indexed) from ```, so need add +1
-                let endLine = codeLines.length - 1// include last ```, so need -1
+                let endLine = startLine + codeLines.length - 1// include last ```, so need -1
                 
                 // Select
                 const selectCommand: vscode.Command = {
@@ -68,16 +67,38 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     arguments: [startLine, endLine, false]
                 };
                 
-                // const cutCommand: vscode.Command = {
-                //     title: "🔦",
-                //     command: "markdown-copy-code.selectcode",
-                //     arguments: [startLine, endLine, false]
-                // };
+                const cutCommand: vscode.Command = {
+                    title: "✂️",
+                    command: "markdown-copy-code.cutcode",
+                    arguments: [startLine, endLine, false]
+                };
+                
+                const deleteCommand: vscode.Command = {
+                    title: "🗑️",
+                    command: "markdown-copy-code.deletecode",
+                    arguments: [startLine, endLine, false]
+                };
+                
+                const indentCommand: vscode.Command = {
+                    title: "🔜",
+                    command: "markdown-copy-code.indentcode",
+                    arguments: [startLine, endLine, false]
+                };
+                
+                const outdentCommand: vscode.Command = {
+                    title: "🔙",
+                    command: "markdown-copy-code.outdentcode",
+                arguments: [startLine, endLine, false]
+                };
                 
                 // Add Above Commands
                 if (copyRange) {
                     this.codeLenses.push(new vscode.CodeLens(copyRange, copyCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, deleteCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, outdentCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, cutCommand));
                 }
                 
                 
@@ -112,21 +133,21 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                 }
 
                 // Add Replace Variables Command
-                if (content.indexOf("#") !== -1 && content.indexOf("=") !== -1) {
-                    const replacePosition = new vscode.Position(line.lineNumber, 8);
-                    const replaceCommand: vscode.Command = {
-                        title: "Replace Variables",
-                        command: "markdown-copy-code.replace-variables",
-                        arguments: [content, runPosition, false],
-                    };
-                    const replaceRanage = document.getWordRangeAtPosition(
-                        replacePosition,
-                        new RegExp(reg)
-                    );
-                    if (replaceRanage) {
-                        // this.codeLenses.push(new vscode.CodeLens(replaceRanage, replaceCommand));
-                    }
-                }
+                // if (content.indexOf("#") !== -1 && content.indexOf("=") !== -1) {
+                //     const replacePosition = new vscode.Position(line.lineNumber, 8);
+                //     const replaceCommand: vscode.Command = {
+                //         title: "Replace Variables",
+                //         command: "markdown-copy-code.replace-variables",
+                //         arguments: [content, runPosition, false],
+                //     };
+                //     const replaceRanage = document.getWordRangeAtPosition(
+                //         replacePosition,
+                //         new RegExp(reg)
+                //     );
+                //     if (replaceRanage) {
+                //         // this.codeLenses.push(new vscode.CodeLens(replaceRanage, replaceCommand));
+                //     }
+                // }
             }
             return this.codeLenses;
         }

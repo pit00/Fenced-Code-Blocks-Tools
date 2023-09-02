@@ -12,9 +12,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerCodeLensProvider("*", codelensProvider);
 
     // Copy
-    vscode.commands.registerCommand(
-        "markdown-copy-code.copycode",
-        async (content: any) => {
+    vscode.commands.registerCommand("markdown-copy-code.copycode", async (content: any) => {
             await vscode.env.clipboard.writeText(`${content}`);
             vscode.window.showInformationMessage(`Copy is successful.`);
         }
@@ -22,23 +20,50 @@ export function activate(context: vscode.ExtensionContext) {
     
     // Select
     vscode.commands.registerCommand("markdown-copy-code.selectcode", async (startLine: any, endLine: any) => {
-        vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, 0, startLine, 0)
+        if (vscode.window.activeTextEditor?.selection != undefined){
+            vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, 0, startLine, 0);
+        }
         // bypasses .selections (that must recive a [ ] of new Selection?) [endLin, endCol, startLin, startCol]
     });
     
-    // handle markdown-copy-code.copycode command
-    vscode.commands.registerCommand(
-        "markdown-copy-code.copycode",
-        async (content: any) => {
-            await vscode.env.clipboard.writeText(`${content}`);
-            vscode.window.showInformationMessage(`Copy is successful.`);
+    // Cut
+    vscode.commands.registerCommand("markdown-copy-code.cutcode", async (startLine: any, endLine: any) => {
+        if (vscode.window.activeTextEditor?.selection != undefined){
+            vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, 0, startLine, 0);
+            vscode.commands.executeCommand("editor.action.clipboardCutAction")
         }
-    );
-
-    // handle markdown-copy-code.runcode command
-    vscode.commands.registerCommand(
-        "markdown-copy-code.runcode",
-        async (content: any, details: any) => {
+        // bypasses .selections (that must recive a [ ] of new Selection?) [endLin, endCol, startLin, startCol]
+    });
+    
+    // Delete
+    vscode.commands.registerCommand("markdown-copy-code.deletecode", async (startLine: any, endLine: any) => {
+        if (vscode.window.activeTextEditor?.selection != undefined){
+            vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, 0, startLine, 0);
+            vscode.commands.executeCommand("deleteRight")
+        }
+        // bypasses .selections (that must recive a [ ] of new Selection?) [endLin, endCol, startLin, startCol]
+    });
+    
+    // Indent
+    vscode.commands.registerCommand("markdown-copy-code.indentcode", async (startLine: any, endLine: any) => {
+        if (vscode.window.activeTextEditor?.selection != undefined){
+            vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, 0, startLine, 0);
+            vscode.commands.executeCommand("editor.action.indentLines")
+        }
+        // bypasses .selections (that must recive a [ ] of new Selection?) [endLin, endCol, startLin, startCol]
+    });
+    
+    // Outdent
+    vscode.commands.registerCommand("markdown-copy-code.outdentcode", async (startLine: any, endLine: any) => {
+        if (vscode.window.activeTextEditor?.selection != undefined){
+            vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, 0, startLine, 0);
+            vscode.commands.executeCommand("editor.action.outdentLines")
+        }
+        // bypasses .selections (that must recive a [ ] of new Selection?) [endLin, endCol, startLin, startCol]
+    });
+    
+    // Run
+    vscode.commands.registerCommand("markdown-copy-code.runcode", async (content: any, details: any) => {
             let terminal: any = vscode.window.activeTerminal;
             if (!terminal) {
                 terminal = await vscode.window.createTerminal("Code Runner");
@@ -88,40 +113,6 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.commands.executeCommand("workbench.action.terminal.clear");
             }
             terminal.sendText(`${content}`);
-        }
-    );
-
-    // handle markdown-copy-code.replace-variables command
-    vscode.commands.registerCommand(
-        "markdown-copy-code.replace-variables",
-        async (content: string, position: vscode.Position) => {
-            let currentDocumentURI = vscode.window.activeTextEditor?.document.uri;
-            if (currentDocumentURI) {
-                content = replaceVariables(content);
-                let textEncoder: TextEncoder = new TextEncoder();
-                if (vscode.workspace.workspaceFolders) {
-                    let tempFileUri = vscode.Uri.file(
-                        vscode.workspace.workspaceFolders[0]?.uri.fsPath +
-                            "/markdown-enhanced-code-block-temp.md"
-                    );
-                    vscode.workspace.fs.writeFile(
-                        tempFileUri,
-                        textEncoder.encode(content)
-                    );
-                    // show the code
-                    let location = new vscode.Location(
-                        tempFileUri,
-                        new vscode.Position(0, 0)
-                    );
-                    await vscode.commands.executeCommand(
-                        "editor.action.peekLocations",
-                        currentDocumentURI,
-                        position,
-                        [location],
-                        "peek"
-                    );
-                }
-            }
         }
     );
 }
