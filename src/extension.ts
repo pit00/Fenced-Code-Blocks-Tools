@@ -21,8 +21,8 @@ export function activate(context: vscode.ExtensionContext) {
     );
     
     // Select
-    vscode.commands.registerCommand("markdown-copy-code.selectcode", async (startLin: any, totalLin: any) => {
-        vscode.window.activeTextEditor.selection = new vscode.Selection(startLin + totalLin, 0, startLin, 0)
+    vscode.commands.registerCommand("markdown-copy-code.selectcode", async (startLine: any, endLine: any) => {
+        vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, 0, startLine, 0)
         // bypasses .selections (that must recive a [ ] of new Selection?) [endLin, endCol, startLin, startCol]
     });
     

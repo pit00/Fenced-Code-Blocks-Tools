@@ -57,12 +57,22 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     arguments: [code, false]
                 };
                 
+                
+                let startLine = line.lineNumber + 1 // starting line (0 indexed) from ```, so need add +1
+                let endLine = codeLines.length - 1// include last ```, so need -1
+                
                 // Select
                 const selectCommand: vscode.Command = {
                     title: "🔦",
                     command: "markdown-copy-code.selectcode",
-                    arguments: [line.lineNumber + 1, codeLines.length - 1, false]
+                    arguments: [startLine, endLine, false]
                 };
+                
+                // const cutCommand: vscode.Command = {
+                //     title: "🔦",
+                //     command: "markdown-copy-code.selectcode",
+                //     arguments: [startLine, endLine, false]
+                // };
                 
                 // Add Above Commands
                 if (copyRange) {
