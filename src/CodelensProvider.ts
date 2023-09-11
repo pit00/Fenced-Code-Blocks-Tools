@@ -12,14 +12,14 @@ export class CodelensProvider implements vscode.CodeLensProvider {
         new vscode.EventEmitter<void>();
     public readonly onDidChangeCodeLenses: vscode.Event<void> =
         this._onDidChangeCodeLenses.event;
-
+    
     constructor() {
         this.regex = /```([\s\S].[\s\S]*?[\s\S])```/g;
         vscode.workspace.onDidChangeConfiguration((_) => {
             this._onDidChangeCodeLenses.fire();
         });
     }
-
+    
     /**
      * Provides the code lenses for markdown code blocks
      * @param document Current opened document
@@ -112,10 +112,9 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
                 }
                 
-                
                 // Add Run Code Command
                 const runPosition = new vscode.Position(line.lineNumber, 5);
-                if (!vscode.workspace.getConfiguration("markdown-enhanced-code-block").get("disableRunButton", true)) {
+                if (!vscode.workspace.getConfiguration("fenced-code-blocks-tools").get("disableRunButton", true)) {
                     let codeConfigs = content.split("\n")[0].replace(/`/g, "");
                     let details = {
                         position: runPosition,
@@ -128,7 +127,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     ) {
                         details.org = codeConfigs.split("|")[1];
                     }
-
+                    
                     if (details.language) {
                         code = getScriptToRunCode(code, details);
                     }
@@ -142,7 +141,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                         this.codeLenses.push(new vscode.CodeLens(runRange, runCommand));
                     }
                 }
-
+                
                 // Add Replace Variables Command
                 // if (content.indexOf("#") !== -1 && content.indexOf("=") !== -1) {
                 //     const replacePosition = new vscode.Position(line.lineNumber, 8);

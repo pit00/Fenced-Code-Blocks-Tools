@@ -75,10 +75,9 @@ export function activate(context: vscode.ExtensionContext) {
                     );
                     return;
                 }
-
                 if (details.language === "apex") {
                     let typeOfOrg = context.globalState.get(
-                        "markdown-enhanced-code-block-org-" + details.org
+                        "fenced-code-blocks-tools-org-" + details.org
                     );
                     if (!typeOfOrg) {
                         const isOrgSandbox = await isSandbox(details.org);
@@ -88,7 +87,7 @@ export function activate(context: vscode.ExtensionContext) {
                             typeOfOrg = "Production";
                         }
                         context.globalState.update(
-                            "markdown-enhanced-code-block-org-" + details.org,
+                            "fenced-code-blocks-tools-org-" + details.org,
                             typeOfOrg
                         );
                     }
@@ -106,7 +105,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
             terminal.show();
             if(vscode.workspace
-                    .getConfiguration("markdown-enhanced-code-block")
+                    .getConfiguration("fenced-code-blocks-tools")
                     .get("clearTerminalBeforeRun", true)){
                 vscode.commands.executeCommand("workbench.action.terminal.clear");
             }
