@@ -4,7 +4,7 @@
     "displayName": "Fenced Code Blocks Tools",
     "description": "Enhances the markdown codeblock with features like copy, run, etc",
     "icon": "images/logo.png",
-    "version": "1.0.4",
+    "version": "1.1.0",
     "engines": {
         "vscode": "^1.70.0"
     },

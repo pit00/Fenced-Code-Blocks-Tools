@@ -65,6 +65,13 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     endCol = codeLines[codeLines.length - 2].length; + 1
                 }
                 
+                // Paste
+                const pasteCommand: vscode.Command = {
+                    title: "📋",
+                    command: "markdown-copy-code.pastecode",
+                    arguments: [startLine, endLine, endCol, false]
+                };
+                
                 // Select
                 const selectCommand: vscode.Command = {
                     title: "🔦",
@@ -86,7 +93,6 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     arguments: [startLine, endLine, endCol, false]
                 };
                 
-                
                 // Indent
                 const indentCommand: vscode.Command = {
                     title: "🔜",
@@ -101,15 +107,32 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                 arguments: [startLine, endLine + 1, false]
                 };
                 
+                // Clone
+                const cloneCommand: vscode.Command = {
+                    title: "🐑",
+                    command: "markdown-copy-code.clonecode",
+                    arguments: [startLine, endLine, endCol, false]
+                };
+                
+                // Remove
+                const removeCommand: vscode.Command = {
+                    title: "❌",
+                    command: "markdown-copy-code.removecode",
+                    arguments: [startLine, endLine, endCol, false]
+                };
+                
                 // Add Above Commands
                 if (copyRange) { // put some label after ``` to alwyas trigger
                     this.codeLenses.push(new vscode.CodeLens(copyRange, copyCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, deleteCommand));
-                    // this.codeLenses.push(new vscode.CodeLens(copyRange, pasteCommand)); // ⠐TODO⠂ paste append / paste overwrite / cursor pos
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, cutCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, pasteCommand)); // paste overwrite
+                    // ? paste append / cursor pos
+                    // this.codeLenses.push(new vscode.CodeLens(copyRange, deleteCommand));
+                    // this.codeLenses.push(new vscode.CodeLens(copyRange, cutCommand));
+                    // this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, outdentCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, cloneCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, removeCommand));
                 }
                 
                 // Add Run Code Command
