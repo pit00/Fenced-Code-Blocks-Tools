@@ -26,12 +26,13 @@ export function activate(context: vscode.ExtensionContext) {
                 vscode.commands.executeCommand("editor.action.insertLineAfter")
             }
             else if(startLine - endLine == 0){
-                vscode.window.activeTextEditor.selection = new vscode.Selection(endLine + 1, endCol, startLine, 0);
+                vscode.window.activeTextEditor.selection = new vscode.Selection(endLine + 1, 0, startLine, 0); // endCol is 0 anyway
+                vscode.commands.executeCommand("deleteRight")
+                vscode.commands.executeCommand("editor.action.insertLineBefore")
             }
             else {
                 vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, endCol, startLine, 0);
             }
-            // vscode.commands.executeCommand("deleteRight")
             vscode.commands.executeCommand("pasteAndIndent.action")
         }
     });
