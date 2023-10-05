@@ -104,7 +104,14 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                 const outdentCommand: vscode.Command = {
                     title: "🔙",
                     command: "markdown-copy-code.outdentcode",
-                arguments: [startLine, endLine + 1, false]
+                    arguments: [startLine, endLine + 1, false]
+                };
+                
+                // Nest
+                const nestCommand: vscode.Command = {
+                    title: "🪹",
+                    command: "markdown-copy-code.nestcode",
+                    arguments: [startLine, endLine + 1, false]
                 };
                 
                 // Clone
@@ -131,6 +138,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     // this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, outdentCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, nestCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, cloneCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, removeCommand));
                 }

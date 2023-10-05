@@ -79,6 +79,15 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
     
+    // Nest
+    vscode.commands.registerCommand("markdown-copy-code.nestcode", async (startLine: any, endLine: any) => {
+        if (vscode.window.activeTextEditor?.selection != undefined){
+            vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, 0, startLine, 0);
+            vscode.commands.executeCommand("custom.IndentEmpty")
+            vscode.commands.executeCommand("cancelSelection")
+        }
+    });
+    
     // Clone
     vscode.commands.registerCommand("markdown-copy-code.clonecode", async (startLine: any, endLine: any) => {
         if (vscode.window.activeTextEditor?.selection != undefined){
