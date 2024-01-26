@@ -45,25 +45,22 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                 let code = codeLines.join("\n").replace(/`/g, "");
                 code = code.slice(0, -1); // remove last \n
                 
-                // Copy
                 const line = document.lineAt(document.positionAt(matches.index).line);
                 const copyPosition = new vscode.Position(line.lineNumber, 0);
-                const copyRange = document.getWordRangeAtPosition(
-                    copyPosition,
-                    new RegExp(reg)
-                );
-                const copyCommand: vscode.Command = {
-                    title: "📎",
-                    command: "markdown-copy-code.copycode",
-                    arguments: [code, false]
-                };
-                
+                const copyRange = document.getWordRangeAtPosition(copyPosition, new RegExp(reg));
                 let startLine = line.lineNumber + 1 // starting line (0 indexed) from ```, so need add +1
                 let endLine = startLine + codeLines.length - 2
                 let endCol = 0;
                 if(codeLines.length - 2 > 0){ // case null
                     endCol = codeLines[codeLines.length - 2].length; + 1
                 }
+                
+                // Copy
+                const copyCommand: vscode.Command = {
+                    title: "📎",
+                    command: "markdown-copy-code.copycode",
+                    arguments: [code, false]
+                };
                 
                 // Paste
                 const pasteCommand: vscode.Command = {
@@ -128,66 +125,74 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     arguments: [startLine, endLine, endCol, false]
                 };
                 
+                // Terminal
+                const runCommand: vscode.Command = {
+                    title: "💲",
+                    command: "markdown-copy-code.runcode",
+                    arguments: [startLine, endLine, endCol, false]
+                };
+                
                 // Add Above Commands
                 if (copyRange) { // put some label after ``` to alwyas trigger
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, outdentCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, nestCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, copyCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, pasteCommand)); // paste overwrite
                     // ? paste append / cursor pos
                     // this.codeLenses.push(new vscode.CodeLens(copyRange, deleteCommand));
                     // this.codeLenses.push(new vscode.CodeLens(copyRange, cutCommand));
                     // this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, outdentCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, nestCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, cloneCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, removeCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, runCommand));
                 }
                 
                 // Add Run Code Command
-                const runPosition = new vscode.Position(line.lineNumber, 5);
-                if (!vscode.workspace.getConfiguration("fenced-code-blocks-tools").get("disableRunButton", true)) {
-                    let codeConfigs = content.split("\n")[0].replace(/`/g, "");
-                    let details = {
-                        position: runPosition,
-                        language: codeConfigs.split("|")[0],
-                        org: "",
-                    };
-                    if (
-                        (details.language === "apex" || details.language === "soql") &&
-                        codeConfigs.split("|").length > 0
-                    ) {
-                        details.org = codeConfigs.split("|")[1];
-                    }
+                // const runPosition = new vscode.Position(line.lineNumber, 5);
+                // if (!vscode.workspace.getConfiguration("fenced-code-blocks-tools").get("disableRunButton", true)) {
+                    // let codeConfigs = content.split("\n")[0].replace(/`/g, "");
+                    // let details = {
+                        // position: runPosition,
+                        // language: codeConfigs.split("|")[0],
+                        // org: ""
+                    // }
                     
-                    if (details.language) {
-                        code = getScriptToRunCode(code, details);
-                    }
-                    const runCommand: vscode.Command = {
-                        title: "🧩",
-                        command: "markdown-copy-code.runcode",
-                        arguments: [code, details, false]
-                    };
-                    const runRange = document.getWordRangeAtPosition(runPosition, new RegExp(reg));
-                    if (runRange) {
-                        this.codeLenses.push(new vscode.CodeLens(runRange, runCommand));
-                    }
-                }
+                    // if ((details.language === "apex" || details.language === "soql") && codeConfigs.split("|").length > 0) {
+                        // details.org = codeConfigs.split("|")[1];
+                    // }
+                    
+                    // if (details.language) {
+                        // code = getScriptToRunCode(code, details);
+                    // }
+                    
+                    // const runCommand: vscode.Command = {
+                        // title: "💲",
+                        // command: "markdown-copy-code.runcode",
+                        // arguments: [code, false]
+                    // };
+                    // // arguments: [code, details, false]
+                    // const runRange = document.getWordRangeAtPosition(runPosition, new RegExp(reg));
+                    // if (runRange) {
+                        // this.codeLenses.push(new vscode.CodeLens(runRange, runCommand));
+                    // }
+                // }
                 
                 // Add Replace Variables Command
                 // if (content.indexOf("#") !== -1 && content.indexOf("=") !== -1) {
-                //     const replacePosition = new vscode.Position(line.lineNumber, 8);
-                //     const replaceCommand: vscode.Command = {
-                //         title: "Replace Variables",
-                //         command: "markdown-copy-code.replace-variables",
-                //         arguments: [content, runPosition, false],
-                //     };
-                //     const replaceRanage = document.getWordRangeAtPosition(
-                //         replacePosition,
-                //         new RegExp(reg)
-                //     );
-                //     if (replaceRanage) {
-                //         // this.codeLenses.push(new vscode.CodeLens(replaceRanage, replaceCommand));
-                //     }
+                    // const replacePosition = new vscode.Position(line.lineNumber, 8);
+                    // const replaceCommand: vscode.Command = {
+                        // title: "Replace Variables",
+                        // command: "markdown-copy-code.replace-variables",
+                        // arguments: [content, runPosition, false],
+                    // };
+                    // const replaceRanage = document.getWordRangeAtPosition(
+                        // replacePosition,
+                        // new RegExp(reg)
+                    // );
+                    // if (replaceRanage) {
+                        // // this.codeLenses.push(new vscode.CodeLens(replaceRanage, replaceCommand));
+                    // }
                 // }
             }
             return this.codeLenses;

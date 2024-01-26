@@ -66,7 +66,7 @@ export function activate(context: vscode.ExtensionContext) {
         if (vscode.window.activeTextEditor?.selection != undefined){
             vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, 0, startLine, 0);
             vscode.commands.executeCommand("editor.action.indentLines")
-            vscode.commands.executeCommand("cancelSelection")
+            vscode.commands.executeCommand("cursorLineEnd")
         }
     });
     
@@ -75,7 +75,7 @@ export function activate(context: vscode.ExtensionContext) {
         if (vscode.window.activeTextEditor?.selection != undefined){
             vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, 0, startLine, 0);
             vscode.commands.executeCommand("editor.action.outdentLines")
-            vscode.commands.executeCommand("cancelSelection")
+            vscode.commands.executeCommand("cursorLineEnd")
         }
     });
     
@@ -106,57 +106,63 @@ export function activate(context: vscode.ExtensionContext) {
     });
     
     // Run
-    vscode.commands.registerCommand("markdown-copy-code.runcode", async (content: any, details: any) => {
-            let terminal: any = vscode.window.activeTerminal;
-            if (!terminal) {
-                terminal = await vscode.window.createTerminal("Code Runner");
-            }
-            if (details.language === "apex" || details.language === "soql") {
-                if (!details.org) {
-                    vscode.window.showErrorMessage(
-                        "Org is not passed, Please pass org like ```" +
-                            details.language +
-                            "|<sfdx-org-alias>"
-                    );
-                    return;
-                }
-                if (details.language === "apex") {
-                    let typeOfOrg = context.globalState.get(
-                        "fenced-code-blocks-tools-org-" + details.org
-                    );
-                    if (!typeOfOrg) {
-                        const isOrgSandbox = await isSandbox(details.org);
-                        if (isOrgSandbox) {
-                            typeOfOrg = "Sandbox";
-                        } else {
-                            typeOfOrg = "Production";
-                        }
-                        context.globalState.update(
-                            "fenced-code-blocks-tools-org-" + details.org,
-                            typeOfOrg
-                        );
-                    }
-                    if (typeOfOrg === "Production") {
-                        let confirmation = await vscode.window.showInformationMessage(
-                            "You are running this on production, are you sure?",
-                            "Yes",
-                            "No"
-                        );
-                        if (confirmation !== "Yes") {
-                            return;
-                        }
-                    }
-                }
-            }
-            terminal.show();
-            if(vscode.workspace
-                    .getConfiguration("fenced-code-blocks-tools")
-                    .get("clearTerminalBeforeRun", true)){
-                vscode.commands.executeCommand("workbench.action.terminal.clear");
-            }
-            terminal.sendText(`${content}`);
+    vscode.commands.registerCommand("markdown-copy-code.runcode", async (startLine: any, endLine: any, endCol: any) => {
+        if (vscode.window.activeTextEditor?.selection != undefined){
+            vscode.window.activeTextEditor.selection = new vscode.Selection(startLine, 0, endLine, endCol);
+            // ⠐TIP⠂ anchorLine, anchorCharacter, activeLine, activeCharacter
+            vscode.commands.executeCommand("extension.sendToTerminalPlus")
+            vscode.commands.executeCommand("cursorLineEnd")
         }
-    );
+    });
+    // vscode.commands.registerCommand("markdown-copy-code.runcode", async (content: any, details: any) => {
+            // let terminal: any = vscode.window.activeTerminal;
+            // if (!terminal) {
+                // terminal = await vscode.window.createTerminal("Code Runner");
+            // }
+            // // if (details.language === "apex" || details.language === "soql") {
+                // // if (!details.org) {
+                    // // vscode.window.showErrorMessage(
+                        // // "Org is not passed, Please pass org like ```" +
+                            // // details.language +
+                            // // "|<sfdx-org-alias>"
+                    // // );
+                    // // return;
+                // // }
+                // // if (details.language === "apex") {
+                    // // let typeOfOrg = context.globalState.get(
+                        // // "fenced-code-blocks-tools-org-" + details.org
+                    // // );
+                    // // if (!typeOfOrg) {
+                        // // const isOrgSandbox = await isSandbox(details.org);
+                        // // if (isOrgSandbox) {
+                            // // typeOfOrg = "Sandbox";
+                        // // } else {
+                            // // typeOfOrg = "Production";
+                        // // }
+                        // // context.globalState.update(
+                            // // "fenced-code-blocks-tools-org-" + details.org,
+                            // // typeOfOrg
+                        // // );
+                    // // }
+                    // // if (typeOfOrg === "Production") {
+                        // // let confirmation = await vscode.window.showInformationMessage(
+                            // // "You are running this on production, are you sure?",
+                            // // "Yes",
+                            // // "No"
+                        // // );
+                        // // if (confirmation !== "Yes") {
+                            // // return;
+                        // // }
+                    // // }
+                // // }
+            // // }
+            // terminal.show();
+            // if(vscode.workspace.getConfiguration("fenced-code-blocks-tools").get("clearTerminalBeforeRun", true)){
+                // vscode.commands.executeCommand("workbench.action.terminal.clear");
+            // }
+            // terminal.sendText(`${content}`);
+        // }
+    // );
 }
 
 // This method is called when your extension is deactivated
