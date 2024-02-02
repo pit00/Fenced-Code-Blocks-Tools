@@ -61,6 +61,15 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
     
+    // Count
+    vscode.commands.registerCommand("markdown-copy-code.countcode", async (startLine: any, endLine: any) => {
+        let diff = endLine - startLine
+        let out = diff.toString();
+        // out = out.replace(/0/g, '0️⃣').replace(/1/g, '1️⃣').replace(/2/g, '2️⃣').replace(/3/g, '3️⃣').replace(/4/g, '4️⃣').replace(/5/g, '5️⃣').replace(/6/g, '6️⃣').replace(/7/g, '7️⃣').replace(/8/g, '8️⃣').replace(/9/g, '9️⃣');
+        out = out.replace(/0/g, '⓿').replace(/1/g, '❶').replace(/2/g, '❷').replace(/3/g, '❸').replace(/4/g, '❹').replace(/5/g, '❺').replace(/6/g, '❻').replace(/7/g, '❼').replace(/8/g, '❽').replace(/9/g, '❾');
+        vscode.window.showInformationMessage(out)
+    });
+    
     // Indent
     vscode.commands.registerCommand("markdown-copy-code.indentcode", async (startLine: any, endLine: any) => {
         if (vscode.window.activeTextEditor?.selection != undefined){

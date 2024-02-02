@@ -125,6 +125,13 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     arguments: [startLine, endLine, endCol, false]
                 };
                 
+                // Counter
+                const countCommand: vscode.Command = {
+                    title: "🧮",
+                    command: "markdown-copy-code.countcode",
+                    arguments: [startLine, endLine + 1, false]
+                };
+                
                 // Terminal
                 const runCommand: vscode.Command = {
                     title: "💲",
@@ -145,6 +152,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     // this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, cloneCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, removeCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, countCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, runCommand));
                 }
                 
