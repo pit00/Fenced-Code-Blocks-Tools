@@ -14,7 +14,8 @@ export class CodelensProvider implements vscode.CodeLensProvider {
         this._onDidChangeCodeLenses.event;
     
     constructor() {
-        this.regex = /```([\s\S].[\s\S]*?[\s\S])```/g;
+        // this.regex = /```([\s\S].[\s\S]*?[\s\S])```/g;
+        this.regex = /```[ ][\s\S]*?```/g;
         vscode.workspace.onDidChangeConfiguration((_) => {
             this._onDidChangeCodeLenses.fire();
         });
@@ -145,12 +146,12 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     this.codeLenses.push(new vscode.CodeLens(copyRange, nestCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, copyCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, pasteCommand)); // paste overwrite
+                    // this.codeLenses.push(new vscode.CodeLens(copyRange, pasteCommand)); // paste overwrite
                     // ? paste append / cursor pos
                     // this.codeLenses.push(new vscode.CodeLens(copyRange, deleteCommand));
                     // this.codeLenses.push(new vscode.CodeLens(copyRange, cutCommand));
                     // this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, cloneCommand));
+                    // this.codeLenses.push(new vscode.CodeLens(copyRange, cloneCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, removeCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, countCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, runCommand));
