@@ -59,89 +59,89 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                 // Copy
                 const copyCommand: vscode.Command = {
                     title: "📎",
-                    command: "markdown-copy-code.copycode",
+                    command: "fenced.copy",
                     arguments: [code, false]
                 };
                 
                 // Paste
                 const pasteCommand: vscode.Command = {
                     title: "📋",
-                    command: "markdown-copy-code.pastecode",
+                    command: "fenced.paste",
                     arguments: [startLine, endLine, endCol, false]
                 };
                 
                 // Select
                 const selectCommand: vscode.Command = {
                     title: "🔦",
-                    command: "markdown-copy-code.selectcode",
-                    arguments: [startLine, endLine, endCol, false]
-                };
-                
-                // Cut
-                const cutCommand: vscode.Command = {
-                    title: "✂️",
-                    command: "markdown-copy-code.cutcode",
+                    command: "fenced.select",
                     arguments: [startLine, endLine, endCol, false]
                 };
                 
                 // Delete
                 const deleteCommand: vscode.Command = {
                     title: "🗑️",
-                    command: "markdown-copy-code.deletecode",
+                    command: "fenced.delete",
                     arguments: [startLine, endLine, endCol, false]
                 };
                 
                 // Indent
                 const indentCommand: vscode.Command = {
                     title: "🔜",
-                    command: "markdown-copy-code.indentcode",
+                    command: "fenced.indent",
                     arguments: [startLine, endLine + 1, false]
                 };
                 
                 // Outdent
                 const outdentCommand: vscode.Command = {
                     title: "🔙",
-                    command: "markdown-copy-code.outdentcode",
+                    command: "fenced.outdent",
                     arguments: [startLine, endLine + 1, false]
                 };
                 
                 // Nest
                 const nestCommand: vscode.Command = {
                     title: "🪹",
-                    command: "markdown-copy-code.nestcode",
+                    command: "fenced.nest",
                     arguments: [startLine, endLine + 1, false]
                 };
                 
                 // Clone
                 const cloneCommand: vscode.Command = {
                     title: "🐑",
-                    command: "markdown-copy-code.clonecode",
+                    command: "fenced.clone",
+                    arguments: [startLine, endLine, endCol, false]
+                };
+                
+                // Cut
+                const cutCommand: vscode.Command = {
+                    title: "✂️",
+                    command: "fenced.cut",
                     arguments: [startLine, endLine, endCol, false]
                 };
                 
                 // Remove
                 const removeCommand: vscode.Command = {
                     title: "❌",
-                    command: "markdown-copy-code.removecode",
+                    command: "fenced.remove",
                     arguments: [startLine, endLine, endCol, false]
                 };
                 
                 // Counter
                 const countCommand: vscode.Command = {
                     title: "🧮",
-                    command: "markdown-copy-code.countcode",
+                    command: "fenced.count",
                     arguments: [startLine, endLine + 1, false]
                 };
                 
                 // Terminal
                 const runCommand: vscode.Command = {
                     title: "💲",
-                    command: "markdown-copy-code.runcode",
+                    command: "fenced.run",
                     arguments: [startLine, endLine, endCol, false]
                 };
                 
                 // Add Above Commands
-                if (copyRange) { // put some label after ``` to alwyas trigger
+                if(copyRange){
                     this.codeLenses.push(new vscode.CodeLens(copyRange, outdentCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, nestCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
@@ -149,10 +149,10 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     // this.codeLenses.push(new vscode.CodeLens(copyRange, pasteCommand)); // paste overwrite
                     // ? paste append / cursor pos
                     // this.codeLenses.push(new vscode.CodeLens(copyRange, deleteCommand));
-                    // this.codeLenses.push(new vscode.CodeLens(copyRange, cutCommand));
                     // this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
                     // this.codeLenses.push(new vscode.CodeLens(copyRange, cloneCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, removeCommand));
+                    // this.codeLenses.push(new vscode.CodeLens(copyRange, removeCommand));
+                    this.codeLenses.push(new vscode.CodeLens(copyRange, cutCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, countCommand));
                     this.codeLenses.push(new vscode.CodeLens(copyRange, runCommand));
                 }
@@ -177,7 +177,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     
                     // const runCommand: vscode.Command = {
                         // title: "💲",
-                        // command: "markdown-copy-code.runcode",
+                        // command: "fenced.runcode",
                         // arguments: [code, false]
                     // };
                     // // arguments: [code, details, false]
@@ -192,7 +192,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     // const replacePosition = new vscode.Position(line.lineNumber, 8);
                     // const replaceCommand: vscode.Command = {
                         // title: "Replace Variables",
-                        // command: "markdown-copy-code.replace-variables",
+                        // command: "fenced.replace-variables",
                         // arguments: [content, runPosition, false],
                     // };
                     // const replaceRanage = document.getWordRangeAtPosition(
