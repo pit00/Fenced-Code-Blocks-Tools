@@ -142,19 +142,34 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                 
                 // Add Above Commands
                 if(copyRange){
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, outdentCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, nestCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, copyCommand));
-                    // this.codeLenses.push(new vscode.CodeLens(copyRange, pasteCommand)); // paste overwrite
-                    // ? paste append / cursor pos
-                    // this.codeLenses.push(new vscode.CodeLens(copyRange, deleteCommand));
-                    // this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
-                    // this.codeLenses.push(new vscode.CodeLens(copyRange, cloneCommand));
-                    // this.codeLenses.push(new vscode.CodeLens(copyRange, removeCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, cutCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, countCommand));
-                    this.codeLenses.push(new vscode.CodeLens(copyRange, runCommand));
+                    let tools : String = vscode.workspace.getConfiguration("fenced-code-blocks-tools").get("enableTools")!
+                    for (let index = 0; index < tools.length; index++) {
+                        if(tools[index] == "copy")
+                            this.codeLenses.push(new vscode.CodeLens(copyRange, copyCommand));
+                        if(tools[index] == "outdent")
+                            this.codeLenses.push(new vscode.CodeLens(copyRange, outdentCommand));
+                        if(tools[index] == "nest")
+                            this.codeLenses.push(new vscode.CodeLens(copyRange, nestCommand));
+                        if(tools[index] == "indent")
+                            this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
+                        if(tools[index] == "select")
+                            this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
+                        if(tools[index] == "paste")
+                            this.codeLenses.push(new vscode.CodeLens(copyRange, pasteCommand)); // paste overwrite
+                        // ? paste append / cursor pos
+                        if(tools[index] == "clone")
+                            this.codeLenses.push(new vscode.CodeLens(copyRange, cloneCommand));
+                        if(tools[index] == "delete")
+                            this.codeLenses.push(new vscode.CodeLens(copyRange, deleteCommand));
+                        if(tools[index] == "cut")
+                            this.codeLenses.push(new vscode.CodeLens(copyRange, cutCommand));
+                        if(tools[index] == "remove")
+                            this.codeLenses.push(new vscode.CodeLens(copyRange, removeCommand));
+                        if(tools[index] == "count")
+                            this.codeLenses.push(new vscode.CodeLens(copyRange, countCommand));
+                        if(tools[index] == "run")
+                            this.codeLenses.push(new vscode.CodeLens(copyRange, runCommand));
+                    }
                 }
                 
                 // Add Run Code Command

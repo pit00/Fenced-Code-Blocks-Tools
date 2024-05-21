@@ -4,7 +4,7 @@
     "displayName": "Fenced Code Blocks Tools",
     "description": "Enhances the markdown codeblock with features like copy, run, etc",
     "icon": "images/logo.png",
-    "version": "1.2.8",
+    "version": "1.2.15",
     "engines": {
         "vscode": "^1.70.0"
     },
@@ -28,6 +28,38 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Clear terminal before run"
+                },
+                "fenced-code-blocks-tools.enableTools": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "copy",
+                            "outdent",
+                            "nest",
+                            "indent",
+                            "select",
+                            "paste",
+                            "clone",
+                            "delete",
+                            "cut",
+                            "remove",
+                            "count",
+                            "run"
+                        ]
+                    },
+                    "default": [
+                        "copy",
+                        "outdent",
+                        "indent",
+                        "clone",
+                        "remove",
+                        "count",
+                        "run"
+                    ],
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "Order of enabled tools"
                 }
             }
         }
