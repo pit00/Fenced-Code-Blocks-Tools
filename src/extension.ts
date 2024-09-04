@@ -11,14 +11,14 @@ export function activate(context: vscode.ExtensionContext) {
     // Register the codelense provider
     vscode.languages.registerCodeLensProvider("*", codelensProvider);
 
-    // Copy
+    // Copy 📎
     vscode.commands.registerCommand("fenced.copy", async (content: any) => {
             await vscode.env.clipboard.writeText(`${content}`);
             vscode.window.showInformationMessage(`Copy is successful.`);
         }
     );
     
-    // Paste
+    // Paste 📋
     vscode.commands.registerCommand("fenced.paste", async (startLine: any, endLine: any, endCol: any) => {
         if (vscode.window.activeTextEditor?.selection != undefined){
             if(startLine - endLine == 1){
@@ -37,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
     
-    // Select
+    // Select 🔦
     vscode.commands.registerCommand("fenced.select", async (startLine: any, endLine: any, endCol: any) => {
         if (vscode.window.activeTextEditor?.selection != undefined){
             vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, endCol, startLine, 0);
@@ -45,7 +45,16 @@ export function activate(context: vscode.ExtensionContext) {
         // bypasses .selections (that must recive a [ ] of new Selection?) [endLine, endCol, startLine, startCol]
     });
     
-    // Delete
+    // Cursor 🐀
+    vscode.commands.registerCommand("fenced.cursor", async (startLine: any, endLine: any, endCol: any) => {
+        if (vscode.window.activeTextEditor?.selection != undefined){
+            vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, endCol, startLine, 0);
+            vscode.commands.executeCommand("editor.action.insertCursorAtEndOfEachLineSelected"),
+            vscode.commands.executeCommand("custom.homer")
+        }
+    });
+    
+    // Delete 🗑️
     vscode.commands.registerCommand("fenced.delete", async (startLine: any, endLine: any, endCol: any) => {
         if (vscode.window.activeTextEditor?.selection != undefined){
             vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, endCol, startLine, 0);
@@ -53,7 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
     
-    // Count
+    // Count 🧮
     vscode.commands.registerCommand("fenced.count", async (startLine: any, endLine: any) => {
         let diff = endLine - startLine
         let out = diff.toString();
@@ -62,7 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showInformationMessage(out)
     });
     
-    // Indent
+    // Indent 🔜
     vscode.commands.registerCommand("fenced.indent", async (startLine: any, endLine: any) => {
         if (vscode.window.activeTextEditor?.selection != undefined){
             vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, 0, startLine, 0);
@@ -71,7 +80,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
     
-    // Outdent
+    // Outdent 🔙
     vscode.commands.registerCommand("fenced.outdent", async (startLine: any, endLine: any) => {
         if (vscode.window.activeTextEditor?.selection != undefined){
             vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, 0, startLine, 0);
@@ -80,7 +89,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
     
-    // Nest
+    // Nest 🪹
     vscode.commands.registerCommand("fenced.nest", async (startLine: any, endLine: any) => {
         if (vscode.window.activeTextEditor?.selection != undefined){
             vscode.window.activeTextEditor.selection = new vscode.Selection(endLine, 0, startLine, 0);
@@ -89,7 +98,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
     
-    // Clone
+    // Clone 🐑
     vscode.commands.registerCommand("fenced.clone", async (startLine: any, endLine: any) => {
         if (vscode.window.activeTextEditor?.selection != undefined){
             vscode.window.activeTextEditor.selection = new vscode.Selection(endLine + 1, 3, startLine - 2, 0); // get above \n
@@ -115,7 +124,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
     
-    // Run
+    // Run 💲
     vscode.commands.registerCommand("fenced.run", async (startLine: any, endLine: any, endCol: any) => {
         if (vscode.window.activeTextEditor?.selection != undefined){
             vscode.window.activeTextEditor.selection = new vscode.Selection(startLine, 0, endLine, endCol);
@@ -124,6 +133,7 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.commands.executeCommand("cursorLineEnd")
         }
     });
+    
     // vscode.commands.registerCommand("fenced.runcode", async (content: any, details: any) => {
             // let terminal: any = vscode.window.activeTerminal;
             // if (!terminal) {

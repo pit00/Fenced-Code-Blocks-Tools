@@ -77,6 +77,13 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     arguments: [startLine, endLine, endCol, false]
                 };
                 
+                // Select
+                const cursorCommand: vscode.Command = {
+                    title: "🐀",
+                    command: "fenced.cursor",
+                    arguments: [startLine, endLine, endCol, false]
+                };
+                
                 // Delete
                 const deleteCommand: vscode.Command = {
                     title: "🗑️",
@@ -154,6 +161,8 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                             this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
                         if(tools[index] == "select")
                             this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
+                        if(tools[index] == "cursor")
+                            this.codeLenses.push(new vscode.CodeLens(copyRange, cursorCommand));
                         if(tools[index] == "paste")
                             this.codeLenses.push(new vscode.CodeLens(copyRange, pasteCommand)); // paste overwrite
                         // ? paste append / cursor pos
