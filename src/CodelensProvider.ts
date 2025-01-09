@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { getScriptToRunCode } from "./MarkdownUtil";
+// import { getScriptToRunCode } from "./MarkdownUtil";
 
 /**
  * Codelense provider which finds the code blocks in the markdown files
@@ -181,6 +181,11 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     }
                 }
                 
+                // "fenced-code-blocks-tools.disableRunButton": {
+                //     "type": "boolean",
+                //     "default": false,
+                //     "description": "Disables the run button."
+                // },
                 // Add Run Code Command
                 // const runPosition = new vscode.Position(line.lineNumber, 5);
                 // if (!vscode.workspace.getConfiguration("fenced-code-blocks-tools").get("disableRunButton", true)) {

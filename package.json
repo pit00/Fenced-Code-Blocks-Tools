@@ -4,7 +4,7 @@
     "displayName": "Fenced Code Blocks Tools",
     "description": "Enhances the markdown codeblock with features like copy, run, etc",
     "icon": "images/logo.png",
-    "version": "1.2.16",
+    "version": "1.3.0",
     "engines": {
         "vscode": "^1.70.0"
     },
@@ -16,19 +16,20 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
-        "commands": [],
+        "commands": [
+            {
+                "command": "fenced.runNear",
+                "title": "Fenced Run (Nearest)"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "fenced.runNear",
+                "key": "ctrl+j"
+            }
+        ],
         "configuration": {
             "properties": {
-                "fenced-code-blocks-tools.disableRunButton": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Disables the run button."
-                },
-                "fenced-code-blocks-tools.clearTerminalBeforeRun": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Clear terminal before run"
-                },
                 "fenced-code-blocks-tools.enableTools": {
                     "type": "array",
                     "items": {
