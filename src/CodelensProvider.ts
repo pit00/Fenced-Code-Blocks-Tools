@@ -123,7 +123,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                 const cutCommand: vscode.Command = {
                     title: "✂️",
                     command: "fenced.cut",
-                    arguments: [startLine, endLine, endCol, false]
+                    arguments: [startLine, endLine, false]
                 };
                 
                 // Remove
