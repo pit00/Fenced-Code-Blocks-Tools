@@ -180,58 +180,6 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                             this.codeLenses.push(new vscode.CodeLens(copyRange, runCommand));
                     }
                 }
-                
-                // "fenced-code-blocks-tools.disableRunButton": {
-                //     "type": "boolean",
-                //     "default": false,
-                //     "description": "Disables the run button."
-                // },
-                // Add Run Code Command
-                // const runPosition = new vscode.Position(line.lineNumber, 5);
-                // if (!vscode.workspace.getConfiguration("fenced-code-blocks-tools").get("disableRunButton", true)) {
-                    // let codeConfigs = content.split("\n")[0].replace(/`/g, "");
-                    // let details = {
-                        // position: runPosition,
-                        // language: codeConfigs.split("|")[0],
-                        // org: ""
-                    // }
-                    
-                    // if ((details.language === "apex" || details.language === "soql") && codeConfigs.split("|").length > 0) {
-                        // details.org = codeConfigs.split("|")[1];
-                    // }
-                    
-                    // if (details.language) {
-                        // code = getScriptToRunCode(code, details);
-                    // }
-                    
-                    // const runCommand: vscode.Command = {
-                        // title: "💲",
-                        // command: "fenced.runcode",
-                        // arguments: [code, false]
-                    // };
-                    // // arguments: [code, details, false]
-                    // const runRange = document.getWordRangeAtPosition(runPosition, new RegExp(reg));
-                    // if (runRange) {
-                        // this.codeLenses.push(new vscode.CodeLens(runRange, runCommand));
-                    // }
-                // }
-                
-                // Add Replace Variables Command
-                // if (content.indexOf("#") !== -1 && content.indexOf("=") !== -1) {
-                    // const replacePosition = new vscode.Position(line.lineNumber, 8);
-                    // const replaceCommand: vscode.Command = {
-                        // title: "Replace Variables",
-                        // command: "fenced.replace-variables",
-                        // arguments: [content, runPosition, false],
-                    // };
-                    // const replaceRanage = document.getWordRangeAtPosition(
-                        // replacePosition,
-                        // new RegExp(reg)
-                    // );
-                    // if (replaceRanage) {
-                        // // this.codeLenses.push(new vscode.CodeLens(replaceRanage, replaceCommand));
-                    // }
-                // }
             }
             return this.codeLenses;
         }

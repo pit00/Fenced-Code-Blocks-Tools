@@ -5,6 +5,80 @@ import * as vscode from "vscode";
 // import { replaceVariables, isSandbox } from "./MarkdownUtil";
 import { CodelensProvider } from "./CodelensProvider";
 
+function cloner(){
+    vscode.commands.executeCommand("editor.action.copyLinesDownAction");
+    vscode.commands.executeCommand("cancelSelection");
+    vscode.commands.executeCommand("lineBreakInsert");
+    vscode.commands.executeCommand("cursorDown");
+}
+
+function selectNearest(btn = "run"){
+    let full = vscode.window.activeTextEditor?.document.getText();
+    let runRegex = /(^\`\`\` .*$)|(^\`\`\`$)/gm
+    
+    let matchedLines = full!.split(/^/gm).map((v, i) => v.match(runRegex) ? i + 1 : 0).filter(a => a);
+    
+    if(matchedLines.length % 2 != 0){
+        vscode.window.showErrorMessage("Malformed Fences!");
+    }
+    else{
+        let cursorPos = vscode.window.activeTextEditor!.selection.active.line + 1;
+        let closest;
+        
+        if (matchedLines.includes(cursorPos)){
+            closest = cursorPos
+        }
+        else if (matchedLines.includes(cursorPos + 1)){ // bellow priority (&& !matchedLines.includes(cursorPos))
+            closest = cursorPos + 1;
+        }
+        else { // nearest (above priority)
+            closest = matchedLines.reduce(function(prev, curr) {
+                return (Math.abs(curr - cursorPos!) < Math.abs(prev - cursorPos!) ? curr : prev);
+            });
+        }
+        
+        let matchIndex = matchedLines.indexOf(closest);
+        
+        if(matchIndex % 2 == 0){ // even
+            let evenStart = closest;
+            let evenEnd = matchedLines[matchIndex + 1] - 1
+            if(evenStart == evenEnd){
+                vscode.window.showWarningMessage("Nearest fence is null!");
+            }
+            else{
+                let evenStartColumn = 0
+                if(btn == "clone"){
+                    let aux = evenStart
+                    evenStart = evenEnd + 1
+                    evenEnd = aux - 1
+                    evenStartColumn += 3
+                    // endLine + 1, 3, startLine - 1, 0
+                }
+                
+                vscode.window.activeTextEditor!.selection = new vscode.Selection(evenStart, evenStartColumn, evenEnd, 0)
+            }
+        }
+        else{ // odd
+            let oddStart = matchedLines[matchIndex - 1];
+            let oddEnd = closest - 1
+            if(oddStart == oddEnd){
+                vscode.window.showWarningMessage("Nearest fence is null!");
+            }
+            else{
+                let oddStartColumn = 0
+                if(btn == "clone"){
+                    let aux = oddStart
+                    oddStart = oddEnd + 1
+                    oddEnd = aux - 1
+                    oddStartColumn += 3
+                    // endLine + 1, 3, startLine - 1, 0
+                }
+                vscode.window.activeTextEditor!.selection = new vscode.Selection(oddStart, oddStartColumn, oddEnd, 0)
+            }
+        }
+    }
+}
+
 // extensions is activated whennever a markdown file is opened in the editor
 export function activate(context: vscode.ExtensionContext) {
     const codelensProvider = new CodelensProvider();
@@ -103,10 +177,7 @@ export function activate(context: vscode.ExtensionContext) {
         if (vscode.window.activeTextEditor?.selection != undefined){
             // vscode.window.activeTextEditor.selection = new vscode.Selection(startLine - 1, 0, endLine + 1, 3);
             vscode.window.activeTextEditor.selection = new vscode.Selection(endLine + 1, 3, startLine - 1, 0);
-            vscode.commands.executeCommand("editor.action.copyLinesDownAction")
-            vscode.commands.executeCommand("cancelSelection")
-            vscode.commands.executeCommand("lineBreakInsert")
-            vscode.commands.executeCommand("cursorDown")
+            cloner();
         }
     });
     
@@ -139,119 +210,22 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
     
-    // Run Key 💲
-    vscode.commands.registerCommand("fenced.runNear", async () => {
-            // if (vscode.window.activeTextEditor?.selection != undefined){
-                // vscode.window.activeTextEditor.selection = new vscode.Selection(0, 0, 1, 1);
-                // vscode.commands.executeCommand("extension.sendToTerminalPlus")
-                // vscode.commands.executeCommand("cursorLineEnd")
-            // }
-        
-            // document: vscode.TextDocument
-            // const text = vscode.TextEditor.document.getText();
-            // const text = document.getText();
-            // let text = editor?.getText();
-        
-            // let editor = vscode.window.activeTextEditor;
-            // var text = editor?.document.getText();
-        let full = vscode.window.activeTextEditor?.document.getText();
-        let runRegex = /(^\`\`\` .*$)|(^\`\`\`$)/gm
-        
-        let matchedLines = full!.split(/^/gm).map((v, i) => v.match(runRegex) ? i + 1 : 0).filter(a => a);
-        
-        if(matchedLines.length % 2 != 0){
-            vscode.window.showErrorMessage("Malformed Fences!");
-        }
-        else{
-            let cusorPos = vscode.window.activeTextEditor!.selection.active.line + 1;
-            
-            let closest = matchedLines.reduce(function(prev, curr) {
-                return (Math.abs(curr - cusorPos!) < Math.abs(prev - cusorPos!) ? curr : prev);
-            });
-            
-            let matchIndex = matchedLines.indexOf(closest);
-            
-            if(matchIndex % 2 == 0){ // even
-                let evenStart = closest;
-                let evenEnd = matchedLines[matchIndex + 1] - 1
-                if(evenStart == evenEnd){
-                    vscode.window.showWarningMessage("Nearest fence is null!");
-                }
-                else{
-                    vscode.window.activeTextEditor!.selection = new vscode.Selection(evenStart, 0, evenEnd, 0)
-                    vscode.commands.executeCommand("extension.sendToTerminalPlus")
-                    vscode.commands.executeCommand("cursorUndo")
-                }
-            }
-            else{ // odd
-                let oddStart = matchedLines[matchIndex - 1];
-                let oddEnd = closest - 1
-                if(oddStart == oddEnd){
-                    vscode.window.showWarningMessage("Nearest fence is null!");
-                }
-                else{
-                    vscode.window.activeTextEditor!.selection = new vscode.Selection(oddStart, 0, oddEnd, 0)
-                    vscode.commands.executeCommand("extension.sendToTerminalPlus")
-                    vscode.commands.executeCommand("cursorUndo")
-                }
-            }
+    // Run Clone 🐑
+    vscode.commands.registerCommand("fenced.cloneNear", async () => {
+        selectNearest("clone")
+        if (vscode.window.activeTextEditor?.selection != undefined){
+            cloner();
         }
     });
     
-    // "fenced-code-blocks-tools.clearTerminalBeforeRun": {
-    //     "type": "boolean",
-    //     "default": false,
-    //     "description": "Clear terminal before run"
-    // },
-    // vscode.commands.registerCommand("fenced.runcode", async (content: any, details: any) => {
-            // let terminal: any = vscode.window.activeTerminal;
-            // if (!terminal) {
-                // terminal = await vscode.window.createTerminal("Code Runner");
-            // }
-            // // if (details.language === "apex" || details.language === "soql") {
-                // // if (!details.org) {
-                    // // vscode.window.showErrorMessage(
-                        // // "Org is not passed, Please pass org like ```" +
-                            // // details.language +
-                            // // "|<sfdx-org-alias>"
-                    // // );
-                    // // return;
-                // // }
-                // // if (details.language === "apex") {
-                    // // let typeOfOrg = context.globalState.get(
-                        // // "fenced-code-blocks-tools-org-" + details.org
-                    // // );
-                    // // if (!typeOfOrg) {
-                        // // const isOrgSandbox = await isSandbox(details.org);
-                        // // if (isOrgSandbox) {
-                            // // typeOfOrg = "Sandbox";
-                        // // } else {
-                            // // typeOfOrg = "Production";
-                        // // }
-                        // // context.globalState.update(
-                            // // "fenced-code-blocks-tools-org-" + details.org,
-                            // // typeOfOrg
-                        // // );
-                    // // }
-                    // // if (typeOfOrg === "Production") {
-                        // // let confirmation = await vscode.window.showInformationMessage(
-                            // // "You are running this on production, are you sure?",
-                            // // "Yes",
-                            // // "No"
-                        // // );
-                        // // if (confirmation !== "Yes") {
-                            // // return;
-                        // // }
-                    // // }
-                // // }
-            // // }
-            // terminal.show();
-            // if(vscode.workspace.getConfiguration("fenced-code-blocks-tools").get("clearTerminalBeforeRun", true)){
-                // vscode.commands.executeCommand("workbench.action.terminal.clear");
-            // }
-            // terminal.sendText(`${content}`);
-        // }
-    // );
+    // Run Key 💲
+    vscode.commands.registerCommand("fenced.runNear", async () => {
+        selectNearest()
+        if (vscode.window.activeTextEditor?.selection != undefined){
+            vscode.commands.executeCommand("extension.sendToTerminalPlus")
+            vscode.commands.executeCommand("cursorUndo")
+        }
+    });
 }
 
 // This method is called when your extension is deactivated

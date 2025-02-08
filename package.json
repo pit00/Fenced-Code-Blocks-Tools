@@ -4,7 +4,7 @@
     "displayName": "Fenced Code Blocks Tools",
     "description": "Enhances the markdown codeblock with features like copy, run, etc",
     "icon": "images/logo.png",
-    "version": "1.3.7",
+    "version": "1.3.12",
     "engines": {
         "vscode": "^1.70.0"
     },
@@ -20,12 +20,20 @@
             {
                 "command": "fenced.runNear",
                 "title": "Fenced Run (Nearest)"
+            },
+            {
+                "command": "fenced.cloneNear",
+                "title": "Fenced Clone (Nearest)"
             }
         ],
         "keybindings": [
             {
                 "command": "fenced.runNear",
                 "key": "ctrl+j"
+            },
+            {
+                "command": "fenced.cloneNear",
+                "key": "ctrl+shift+j"
             }
         ],
         "configuration": {
