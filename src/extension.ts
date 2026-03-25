@@ -167,8 +167,8 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("fenced.nest", async (startLine: any, endLine: any) => {
         if (vscode.window.activeTextEditor?.selection != undefined){
             vscode.window.activeTextEditor.selection = new vscode.Selection(startLine, 0, endLine, 0);
-            vscode.commands.executeCommand("custom.IndentEmpty")
-            // vscode.commands.executeCommand("cancelSelection")
+            vscode.commands.executeCommand("indent-empty-line.selection")
+            vscode.commands.executeCommand("cancelSelection")
         }
     });
     
