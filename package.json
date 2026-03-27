@@ -2,9 +2,9 @@
     "name": "fenced-blocks-tools",
     "publisher": "pit00",
     "displayName": "Fenced Blocks Tools",
-    "description": "Enhances the markdown codeblock with features like copy, run, etc",
+    "description": "Icons above fenced markdown code with various functions",
     "icon": "images/logo.png",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "engines": {
         "vscode": "^1.70.0"
     },

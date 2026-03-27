@@ -77,7 +77,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     arguments: [startLine, endLine, endCol, false]
                 };
                 
-                // Select
+                // Cursor
                 const cursorCommand: vscode.Command = {
                     title: "🐀",
                     command: "fenced.cursor",
