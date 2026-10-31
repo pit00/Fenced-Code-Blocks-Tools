@@ -1,10 +1,10 @@
 {
-    "name": "fenced-blocks-tools",
-    "publisher": "pit00",
-    "displayName": "Fenced Blocks Tools",
+    "name": "fenced-block-tools",
+    "publisher": "pit000",
+    "displayName": "Fenced Block Tools",
     "description": "Icons above fenced markdown code with various functions",
     "icon": "images/logo.png",
-    "version": "1.4.2",
+    "version": "1.5.0",
     "engines": {
         "vscode": "^1.70.0"
     },
@@ -55,7 +55,8 @@
                             "cut",
                             "remove",
                             "count",
-                            "run"
+                            "run",
+                            "lines"
                         ]
                     },
                     "default": [
@@ -64,8 +65,8 @@
                         "indent",
                         "clone",
                         "remove",
-                        "count",
-                        "run"
+                        "run",
+                        "lines"
                     ],
                     "minItems": 1,
                     "uniqueItems": true,

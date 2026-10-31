@@ -1,43 +1,38 @@
 import * as vscode from "vscode";
 // import { getScriptToRunCode } from "./MarkdownUtil";
 
-/**
- * Codelense provider which finds the code blocks in the markdown files
- * and provides commands to operate on those
- */
+// Codelense provider which finds the code blocks in the markdown files and provides commands to operate on those
 export class CodelensProvider implements vscode.CodeLensProvider {
     private codeLenses: vscode.CodeLens[] = [];
     private regex: RegExp;
-    private _onDidChangeCodeLenses: vscode.EventEmitter<void> =
-        new vscode.EventEmitter<void>();
-    public readonly onDidChangeCodeLenses: vscode.Event<void> =
-        this._onDidChangeCodeLenses.event;
+    // private itex: RegExp;
+    private _onDidChangeCodeLenses: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
+    public readonly onDidChangeCodeLenses: vscode.Event<void> = this._onDidChangeCodeLenses.event;
     
     constructor() {
-        // this.regex = /```([\s\S].[\s\S]*?[\s\S])```/g;
-        this.regex = /```[ ][\s\S]*?```/g;
+        // this.regex = /```[ ][\s\S]*?```/g;
+        this.regex = /^```[^!\n]+\n([^]*?)```$/gm;
         vscode.workspace.onDidChangeConfiguration((_) => {
             this._onDidChangeCodeLenses.fire();
         });
     }
     
-    /**
-     * Provides the code lenses for markdown code blocks
-     * @param document Current opened document
-     * @param token Cancellation Taken
-     * @returns vscode.CodeLens[] list of codelenses
-     */
+    /** Provides the code lenses for markdown code blocks
+        * @param document Current opened document
+        * @returns vscode.CodeLens[] list of codelenses
+    */
     public provideCodeLenses(
         document: vscode.TextDocument,
-        token: vscode.CancellationToken
     ): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
-        const isMarkdownFile =
-            vscode.window.activeTextEditor?.document.languageId === "markdown";
+        const isMarkdownFile = vscode.window.activeTextEditor?.document.languageId === "markdown";
         if (isMarkdownFile) {
             this.codeLenses = [];
-            const regex = new RegExp(this.regex);
+            
             const text = document.getText();
             let matches;
+            
+            // Tools fence lens loop
+            const regex = new RegExp(this.regex);
             while ((matches = regex.exec(text)) !== null) {
                 const reg = new RegExp(/(.+)/g);
                 let content: string = matches[0];
@@ -147,40 +142,66 @@ export class CodelensProvider implements vscode.CodeLensProvider {
                     arguments: [startLine, endLine, endCol, false]
                 };
                 
+                // Lines
+                const total = code.split(/\r?\n/).length;
+                const linesCommand: vscode.Command = {
+                    title: `⠀Lines: ${total}`,
+                    command: ""
+                };
+                
                 // Add Above Commands
                 if(copyRange){
                     let tools : String = vscode.workspace.getConfiguration("fenced-code-blocks-tools").get("enableTools")!
-                    for (let index = 0; index < tools.length; index++) {
-                        if(tools[index] == "copy")
-                            this.codeLenses.push(new vscode.CodeLens(copyRange, copyCommand));
-                        if(tools[index] == "outdent")
-                            this.codeLenses.push(new vscode.CodeLens(copyRange, outdentCommand));
-                        if(tools[index] == "nest")
-                            this.codeLenses.push(new vscode.CodeLens(copyRange, nestCommand));
-                        if(tools[index] == "indent")
-                            this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
-                        if(tools[index] == "select")
-                            this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
-                        if(tools[index] == "cursor")
-                            this.codeLenses.push(new vscode.CodeLens(copyRange, cursorCommand));
-                        if(tools[index] == "paste")
-                            this.codeLenses.push(new vscode.CodeLens(copyRange, pasteCommand)); // paste overwrite
-                        // ? paste append / cursor pos
-                        if(tools[index] == "clone")
-                            this.codeLenses.push(new vscode.CodeLens(copyRange, cloneCommand));
-                        if(tools[index] == "delete")
-                            this.codeLenses.push(new vscode.CodeLens(copyRange, deleteCommand));
-                        if(tools[index] == "cut")
-                            this.codeLenses.push(new vscode.CodeLens(copyRange, cutCommand));
-                        if(tools[index] == "remove")
-                            this.codeLenses.push(new vscode.CodeLens(copyRange, removeCommand));
-                        if(tools[index] == "count")
-                            this.codeLenses.push(new vscode.CodeLens(copyRange, countCommand));
-                        if(tools[index] == "run")
-                            this.codeLenses.push(new vscode.CodeLens(copyRange, runCommand));
+                    for (const tool of tools) {
+                        switch (tool) {
+                            case "copy":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, copyCommand));
+                                break;
+                            case "outdent":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, outdentCommand));
+                                break;
+                            case "nest":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, nestCommand));
+                                break;
+                            case "indent":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, indentCommand));
+                                break;
+                            case "select":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, selectCommand));
+                                break;
+                            case "cursor":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, cursorCommand));
+                                break;
+                            case "paste":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, pasteCommand)); // paste overwrite
+                                break;
+                            case "clone":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, cloneCommand));
+                                break;
+                            case "delete":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, deleteCommand));
+                                break;
+                            case "cut":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, cutCommand));
+                                break;
+                            case "remove":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, removeCommand));
+                                break;
+                            case "count":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, countCommand));
+                                break;
+                            case "run":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, runCommand));
+                                break;
+                            case "lines":
+                                this.codeLenses.push(new vscode.CodeLens(copyRange, linesCommand));
+                                break;
+                            // ? paste append / cursor pos
+                        }
                     }
                 }
             }
+            
             return this.codeLenses;
         }
         return [];

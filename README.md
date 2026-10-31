@@ -6,6 +6,14 @@ Icons above fenced markdown code with various functions
 
 ## New / Changed Features
 
+### Tools
+
+```
+    ``` [syntax id]
+        Show tools above fenced code block
+    ```
+```
+
 📎 Copy
 
 📋 Paste
@@ -31,3 +39,13 @@ Icons above fenced markdown code with various functions
 🧮 Counter
 
 💲 Terminal
+
+* Lines Total
+
+### Ignore
+
+```
+    ``` (optional) !
+        Put a `!` at end, to not use this extension
+    ```
+```
